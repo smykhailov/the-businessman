@@ -3,4 +3,131 @@ html, body {
     margin: 0;
     padding: 0;
     width: 100%;
+    color: lightgrey;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+hr {
+    height:2px;
+    border-width:0;
+    color:black;
+    background-color:black;
+    width: 100%;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    height: 100%;
+}
+
+#container {
+    background-color: black;
+    margin-top: 50px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: medium;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    background-color: lightgray;
+    margin: 0 52px;
+}
+
+main {
+    display: flex;
+    height: 320px;
+}
+
+.primary-bg {
+    background-color: blue;
+}
+
+.main-bg {
+    background-color: lightgray;
+}
+
+.secondary-bg {
+    background-color: darkcyan;
+}
+
+.single-line-green {
+    border: medium solid green;
+}
+
+.double-line-green {
+    border: thick double green;
+}
+
+.single-line-black {
+    border: medium solid black;
+}
+
+.double-line-black {
+    border: thick double black;
+}
+
+.text-color-black {
+    color: black;
+}
+
+.window-wrapper {
+    padding: 8px 4px;
+}
+
+.window {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 3px;
+}
+
+.window > .title {
+    display: flex;
+    align-self: center;
+    color: white;
+    position: relative;
+    top: -14px;
+    background-color: blue;
+    padding: 0 8px;
+    font-size: 16px;
+}
+
+.window-layout {
+    display: flex;
+    margin-top: -14px;
+    height: 100%;
+}
+
+.window-shadow {
+    margin-right: 32px;
+    box-shadow: 16px 16px 0px 0px darkgray;
+}
+
+.window-content {
+    padding: 4px 12px;
+}
+
+footer > div {
+    margin: 0 8px;
+    font-size: medium;
+    color: black;
+}
+
+footer > div > span {
+    color: red;
+    font-weight: bold;
 }
