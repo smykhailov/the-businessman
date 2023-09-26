@@ -23,8 +23,8 @@
                 <div class="window-wrapper secondary-bg window-shadow">
                   <div class="window secondary-bg double-line-black text-color-black">
                     <div class="window-content">
-                      <p>Today: 05/21/2023</p>
-                      <p>Friday</p>
+                      <p class="today"><span>Today:</span> <span id="today-date" /></p>
+                      <p class="day-of-week"><span id="today-day-of-week" /></p>
                     </div>
                   </div>
                 </div>
@@ -32,9 +32,9 @@
                 <div class="window-wrapper secondary-bg window-shadow">
                   <div class="window secondary-bg single-line-black text-color-black">
                     <div class="window-content">
-                      <p>Credit interest rate: 12%</p>
-                      <p>Debit interest rate: 18%</p>
-                      <p>Income tax: 4%</p>
+                      <p>Credit interest rate: <span id="credit-interest-rate"></span>%</p>
+                      <p>Debit interest rate: <span id="debit-interest-rate"></span>%</p>
+                      <p>Income tax: <span id="income-tax"></span>%</p>
                     </div>
                   </div>
                 </div>
@@ -43,13 +43,13 @@
                 <div class="window-wrapper secondary-bg window-shadow text-color-black">
                   <div class="window secondary-bg single-line-black">
                     <div class="window-content">
-                      <p>Account balance: 1111 Grobls</p>
-                      <p>Your debt: 2222 Grobls</p>
-                      <p>Your deposit: 333 Grobls</p>
-                      <p>Net income: 333 Grobls</p>
+                      <p>Account balance: <span id="account-balance"></span> Grobls</p>
+                      <p>Your credit: <span id="credit-balance"></span> Grobls</p>
+                      <p>Your deposit: <span id="deposit-balance"></span> Grobls</p>
+                      <p>Net income: <span id="net-income"></span> Grobls</p>
                       <hr />
-                      <p>House tax: 12%</p>
-                      <p>Land tax: 11%</p>
+                      <p>House tax: <span id="house-tax"></span>%</p>
+                      <p>Land tax: <span id="land-tax"></span>%</p>
                     </div>
                   </div>
                 </div>
@@ -67,6 +67,6 @@
         </footer> <!-- footer -->
       </div>  <!-- container -->
     </div>  <!-- wrapper -->
-    <script src="js/main.js"></script>
+    <script src="js/main.js" type="module"></script>
   </body>
 </html>

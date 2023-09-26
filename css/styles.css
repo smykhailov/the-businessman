@@ -131,3 +131,27 @@ footer > div > span {
     color: red;
     font-weight: bold;
 }
+
+.today {
+    display: flex;
+    justify-content: space-between;
+}
+
+.day-of-week {
+    display: flex;
+    justify-content: center;
+    color: purple;
+}
+
+.sunday {
+    color: brown;
+    text-transform: uppercase;
+}
+
+.saturday {
+    color: brown;
+}
+
+.weekday {
+    color: black;
+}
