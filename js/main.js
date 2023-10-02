@@ -1,53 +1,64 @@
 const today = new Date();
 
-var creditInterestRate = Math.random() * 10 + 5;
-var debitInterestRate = Math.random() * 10 + 5;
-var incomeTax = Math.random() * 9 + 1;
+const interestRates = {
+    debitInterestRate: Math.random() * 10 + 5,
+    incomeTax: Math.random() * 9 + 1,
+    creditInterestRate: Math.random() * 10 + 5,
+}
 
-var accountBalance = Math.random() * 10000 + 1000;
-var creditBalance = 0;
-var depositBalance = 0;
-var netIncome = 0;
+const accountBalances = {
+    accountBalance: Math.random() * 10000 + 1000,
+    creditBalance: 0,
+    depositBalance: 0,
+    netIncome: 0,
+}
 
-var houseTax = Math.random() * 19 + 1;
-var landTax = Math.random() * 19 + 1;
-
+const taxes = {
+    houseTax: Math.random() * 19 + 1,
+    landTax: Math.random() * 19 + 1,
+}
 
 setInterval(() => {
+    setTodayView(today);
+    setInterestRates(interestRates);
+    setAccountsBalance(accountBalances);
+    setTaxes(taxes);
+    
+    today.setDate(today.getDate() + 1);
+}, 2000);
+
+
+const setTodayView = (today) => {
     const currentDate = today.toLocaleDateString('en-US');
     const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
     const dayOfWeekNum = today.getDay();
     
-    const todayDateElement = document.getElementById('today-date');
+    setElementData('today-date', currentDate);
+    setElementData('today-day-of-week', dayOfWeek);
+    
+    updateDayOfWeekColor(dayOfWeekNum);
+}
+
+const setInterestRates = (interestRates) => {
+    setElementData('credit-interest-rate', interestRates.creditInterestRate.toFixed(0));
+    setElementData('debit-interest-rate', interestRates.debitInterestRate.toFixed(0));
+    setElementData('income-tax', interestRates.incomeTax.toFixed(0));
+}
+
+const setAccountsBalance = (accountBalances) => {
+    setElementData('account-balance', accountBalances.accountBalance.toFixed(0));
+    setElementData('credit-balance', accountBalances.creditBalance.toFixed(0));
+    setElementData('deposit-balance', accountBalances.depositBalance.toFixed(0));
+    setElementData('net-income', accountBalances.netIncome.toFixed(0));
+}
+
+const setTaxes = (taxes) => {
+    setElementData('house-tax', taxes.houseTax.toFixed(0));
+    setElementData('land-tax', taxes.landTax.toFixed(0));
+}
+
+const updateDayOfWeekColor = (dayOfWeekNum) => {
     const todayDayOfWeekElement = document.getElementById('today-day-of-week');
-    
-    todayDateElement.innerText = currentDate;
-    todayDayOfWeekElement.innerText = dayOfWeek;
-
-    const creditInterestRateElement = document.getElementById('credit-interest-rate');
-    const debitInterestRateElement = document.getElementById('debit-interest-rate');
-    const incomeTaxElement = document.getElementById('income-tax');
-
-    creditInterestRateElement.innerText = creditInterestRate.toFixed(0);
-    debitInterestRateElement.innerText = debitInterestRate.toFixed(0);
-    incomeTaxElement.innerText = incomeTax.toFixed(0);
-
-    const accountBalanceElement = document.getElementById('account-balance');
-    const creditBalanceElement = document.getElementById('credit-balance');
-    const depositBalanceElement = document.getElementById('deposit-balance');
-    const netIncomeElement = document.getElementById('net-income');
-
-    accountBalanceElement.innerText = accountBalance.toFixed(0);
-    creditBalanceElement.innerText = creditBalance.toFixed(0);
-    depositBalanceElement.innerText = depositBalance.toFixed(0);
-    netIncomeElement.innerText = netIncome.toFixed(0);
-
-    const houseTaxElement = document.getElementById('house-tax');
-    const landTaxElement = document.getElementById('land-tax');
-
-    houseTaxElement.innerText = houseTax.toFixed(0);
-    landTaxElement.innerText = landTax.toFixed(0);
-    
     if (dayOfWeekNum === 0) {
         todayDayOfWeekElement.classList.add('sunday');
     } else if (dayOfWeekNum === 6) {
@@ -55,7 +66,10 @@ setInterval(() => {
     } else {
         todayDayOfWeekElement.classList.remove('sunday');
         todayDayOfWeekElement.classList.remove('saturday');
-    }    
-    
-    today.setDate(today.getDate() + 1);
-}, 2000);
+    }
+}
+
+const setElementData = (elementId, data) => {
+    const element = document.getElementById(elementId);
+    element.innerText = data;
+}
