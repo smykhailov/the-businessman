@@ -27,7 +27,6 @@ setInterval(() => {
     today.setDate(today.getDate() + 1);
 }, 2000);
 
-
 const setTodayView = (today) => {
     const currentDate = today.toLocaleDateString('en-US');
     const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
@@ -73,3 +72,43 @@ const setElementData = (elementId, data) => {
     const element = document.getElementById(elementId);
     element.innerText = data;
 }
+
+const setMainMenuActions = () => {
+    const bankButton = document.getElementById('open-bank-btn');
+    const marketButton = document.getElementById('open-market-btn');
+    const exchangeButton = document.getElementById('open-exchange-btn');
+    const assetsButton = document.getElementById('open-assets-btn');
+    const assistantButton = document.getElementById('open-assistant-btn');
+    const quitButton = document.getElementById('open-quit-btn');
+
+    bankButton.addEventListener('click', () => {
+        open('bank-main');
+    });
+
+    marketButton.addEventListener('click', () => {
+        open('market-main');
+    });
+
+    exchangeButton.addEventListener('click', () => {
+        open('exchange-main');
+    });
+
+    assetsButton.addEventListener('click', () => {
+        open('assets-main');
+    });
+
+    assistantButton.addEventListener('click', () => {
+        open('assistant-main');
+    });
+
+    quitButton.addEventListener('click', () => {
+        open('quit-main');
+    });
+}
+
+const open = (windowId) => {
+    const window = document.getElementById(windowId);
+    window.classList.remove('hidden');
+}
+
+setMainMenuActions();
