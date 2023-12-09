@@ -73,7 +73,7 @@ const setElementData = (elementId, data) => {
     element.innerText = data;
 }
 
-const setMainMenuActions = () => {
+const setMainMenuMouseActions = () => {
     const bankButton = document.getElementById('open-bank-btn');
     const marketButton = document.getElementById('open-market-btn');
     const exchangeButton = document.getElementById('open-exchange-btn');
@@ -104,6 +104,65 @@ const setMainMenuActions = () => {
     quitButton.addEventListener('click', () => {
         open('quit-main');
     });
+
+    closeWindowMouseHandler();
+}
+
+const setMainMenuKeyboardActions = () => {    
+    // Assign key bindings to open windows
+    // By assigning it to the document, we can open windows from any page
+    // and make sure there is only one handler for all windows
+    document.addEventListener('keydown', (e) => {
+        assignKeyBindingsToOpenWindow('b', 'bank-main', e);
+        assignKeyBindingsToOpenWindow('m', 'market-main', e);
+        assignKeyBindingsToOpenWindow('e', 'exchange-main', e);
+        assignKeyBindingsToOpenWindow('a', 'assets-main', e);
+        assignKeyBindingsToOpenWindow('s', 'assistant-main', e);
+        assignKeyBindingsToOpenWindow('q', 'quit-main', e);
+
+        closeWindowKeyboardHandler(e);
+    });
+}
+
+const closeWindowMouseHandler = () => {
+    const windows = document.getElementsByClassName('modal');
+    for (let i = 0; i < windows.length; i++) {
+        const window = windows[i];
+
+        window.addEventListener('click', (e) => {
+            // Apply clicks only to the modal window itself
+            if (e.target !== window) {
+                return;
+            }
+
+            window.classList.add('hidden');
+        });
+    }
+}
+
+const assignKeyBindingsToOpenWindow = (keyBinding, windowId, e) => {
+    // Do not allow to open window, if there is already opened window
+    const isThereOpenedWindow = document.querySelector('.modal:not(.hidden)');
+    if (isThereOpenedWindow) {
+        return;
+    }
+
+    if (e.key === keyBinding || (e.key === keyBinding.toUpperCase() && e.shiftKey)) {
+        open(windowId);
+    }
+}
+
+const closeWindowKeyboardHandler = (e) => {
+    if (e.key === 'Escape') {
+        // Do not allow to open window, if there is already opened window
+        const openedWindow = document.querySelector('.modal:not(.hidden)');
+
+        if (openedWindow) {
+            openedWindow.classList.add('hidden');
+        } else {
+            open('quit-main');
+        }
+    }
 }
 
 const open = (windowId) => {
@@ -111,4 +170,5 @@ const open = (windowId) => {
     window.classList.remove('hidden');
 }
 
-setMainMenuActions();
+setMainMenuMouseActions();
+setMainMenuKeyboardActions();
