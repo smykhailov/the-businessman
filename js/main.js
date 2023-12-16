@@ -21,6 +21,11 @@ const startNewGame = () => {
         landTax: Math.random() * 19 + 1,
     }
 
+    const assistantData = {
+        oilToHeatHouse: Math.random() * 29 + 1,
+        birthday: `${(Math.random() * 11 + 1).toFixed(0)}/${(Math.random() * 27 + 1).toFixed(0)}`
+    }
+
     setMainMenuMouseActions();
     setMainMenuKeyboardActions();
 
@@ -35,6 +40,8 @@ const startNewGame = () => {
         setInterestRates(interestRates);
         setAccountsBalance(accountBalances);
         setTaxes(taxes);
+
+        setAssistantData(assistantData);
         
         today.setDate(today.getDate() + 1);
     }, 2000);
@@ -67,6 +74,11 @@ const setAccountsBalance = (accountBalances) => {
 const setTaxes = (taxes) => {
     setElementData('house-tax', taxes.houseTax.toFixed(0));
     setElementData('land-tax', taxes.landTax.toFixed(0));
+}
+
+const setAssistantData = (data) => {
+    setElementData('oil-to-heat-house', data.oilToHeatHouse.toFixed(0));
+    setElementData('birthday', data.birthday);
 }
 
 const updateDayOfWeekColor = (dayOfWeekNum) => {

@@ -21,6 +21,16 @@ hr {
     width: 100%;
 }
 
+table {
+    width: 100%;
+}
+
+table th:not(:first-child),
+table td:not(:first-child) {
+    text-align: right;
+}
+
+
 #wrapper {
     display: flex;
     flex-direction: column;
@@ -87,6 +97,10 @@ main {
 
 .text-color-white {
     color: white;
+}
+
+.text-color-turquoise {
+    color: turquoise;
 }
 
 .text-center {
