@@ -1,31 +1,44 @@
-const today = new Date();
+let currentGameHandler = null;
 
-const interestRates = {
-    debitInterestRate: Math.random() * 10 + 5,
-    incomeTax: Math.random() * 9 + 1,
-    creditInterestRate: Math.random() * 10 + 5,
-}
+const startNewGame = () => {
+    const today = new Date();
 
-const accountBalances = {
-    accountBalance: Math.random() * 10000 + 1000,
-    creditBalance: 0,
-    depositBalance: 0,
-    netIncome: 0,
-}
+    const interestRates = {
+        debitInterestRate: Math.random() * 10 + 5,
+        incomeTax: Math.random() * 9 + 1,
+        creditInterestRate: Math.random() * 10 + 5,
+    }
 
-const taxes = {
-    houseTax: Math.random() * 19 + 1,
-    landTax: Math.random() * 19 + 1,
-}
+    const accountBalances = {
+        accountBalance: Math.random() * 10000 + 1000,
+        creditBalance: 0,
+        depositBalance: 0,
+        netIncome: 0,
+    }
 
-setInterval(() => {
-    setTodayView(today);
-    setInterestRates(interestRates);
-    setAccountsBalance(accountBalances);
-    setTaxes(taxes);
-    
-    today.setDate(today.getDate() + 1);
-}, 2000);
+    const taxes = {
+        houseTax: Math.random() * 19 + 1,
+        landTax: Math.random() * 19 + 1,
+    }
+
+    setMainMenuMouseActions();
+    setMainMenuKeyboardActions();
+
+    setQuitWindowEventHandlers();
+
+    if (currentGameHandler) {
+        clearInterval(currentGameHandler);
+    }
+
+    currentGameHandler = setInterval(() => {
+        setTodayView(today);
+        setInterestRates(interestRates);
+        setAccountsBalance(accountBalances);
+        setTaxes(taxes);
+        
+        today.setDate(today.getDate() + 1);
+    }, 2000);
+};
 
 const setTodayView = (today) => {
     const currentDate = today.toLocaleDateString('en-US');
@@ -170,5 +183,20 @@ const open = (windowId) => {
     window.classList.remove('hidden');
 }
 
-setMainMenuMouseActions();
-setMainMenuKeyboardActions();
+const setQuitWindowEventHandlers = () => {
+    
+    document.addEventListener('keyup', (e) => {
+        const quitWindow = document.getElementById('quit-main');
+    
+        if (quitWindow.classList.contains('hidden')) {
+            return;
+        }
+
+        if (e.key === '1') {
+            quitWindow.classList.add('hidden');
+            startNewGame();
+        }
+    });
+}
+
+startNewGame();
