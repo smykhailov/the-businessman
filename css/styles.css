@@ -30,7 +30,6 @@ table td:not(:first-child) {
     text-align: right;
 }
 
-
 #wrapper {
     display: flex;
     flex-direction: column;
@@ -103,8 +102,16 @@ main {
     color: turquoise;
 }
 
+.text-color-violet {
+    color: violet;
+}
+
 .text-center {
     text-align: center;
+}
+
+.text-left {
+    text-align: left !important;
 }
 
 .window-wrapper {
@@ -193,4 +200,8 @@ footer > div > span {
     height: calc(378px - 100px);
     z-index: 100;
     padding: 100px 0 0 20px;
+}
+
+.wide-line {
+    margin: 16px 0px;
 }

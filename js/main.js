@@ -26,6 +26,70 @@ const startNewGame = () => {
         birthday: `${(Math.random() * 11 + 1).toFixed(0)}/${(Math.random() * 27 + 1).toFixed(0)}`
     }
 
+    const availableHouses = [{
+        name: '1 bedroom',
+        price: Math.round(Math.random() * 5000 + 5000),
+    }, {
+        name: '2 bedrooms',
+        price: Math.round(Math.random() * 10000 + 10000),
+    }, {
+        name: '3 bedrooms',
+        price: Math.round(Math.random() * 10000 + 20000),
+    }, {
+        name: '4 bedrooms',
+        price: Math.round(Math.random() * 10000 + 30000),
+    }, {
+        name: '5 bedrooms',
+        price: Math.round(Math.random() * 10000 + 40000),
+    }, {
+        name: '6 bedrooms',
+        price: Math.round(Math.random() * 10000 + 50000),
+    }, {
+        name: '7 bedrooms',
+        price: Math.round(Math.random() * 10000 + 60000),
+    }];
+
+    const availableCars = [{
+        name: 'Škoda 110 R',
+        price: Math.round(Math.random() * 5000 + 5000),
+    }, {
+        name: 'Škoda Rapid',
+        price: Math.round(Math.random() * 10000 + 10000),
+    }, {
+        name: 'Škoda Fabia',
+        price: Math.round(Math.random() * 10000 + 20000),
+    }, {
+        name: 'Škoda Octavia',
+        price: Math.round(Math.random() * 10000 + 30000),
+    }, {
+        name: 'Škoda Superb',
+        price: Math.round(Math.random() * 10000 + 40000),
+    }, {
+        name: 'Škoda Kodiaq',
+        price: Math.round(Math.random() * 10000 + 50000),
+    }, {
+        name: 'Škoda Enyaq',
+        price:Math.round(Math.random() * 10000 + 60000),
+    }];
+
+    const exchangePrices = {
+        land: Math.round(Math.random() * 300 + 100),
+        oil: Math.round(Math.random() * 30+ 10)
+    }
+
+    const assets = {
+        house: availableHouses[Math.round(Math.random() * 6)],
+        car: availableCars[Math.round(Math.random() * 6)],
+        land: {
+            amount: Math.round(Math.random() * 95 + 5),
+            currentMonthPrice: exchangePrices.land,
+        },
+        oil: {
+            amount: Math.round(Math.random() * 250 + 10),
+            currentMonthPrice: exchangePrices.oil,
+        }
+    }
+
     setMainMenuMouseActions();
     setMainMenuKeyboardActions();
 
@@ -41,6 +105,7 @@ const startNewGame = () => {
         setAccountsBalance(accountBalances);
         setTaxes(taxes);
 
+        setAssets(assets);
         setAssistantData(assistantData);
         
         today.setDate(today.getDate() + 1);
@@ -79,6 +144,18 @@ const setTaxes = (taxes) => {
 const setAssistantData = (data) => {
     setElementData('oil-to-heat-house', data.oilToHeatHouse.toFixed(0));
     setElementData('birthday', data.birthday);
+}
+
+const setAssets = (assets) => {
+    setElementData('owned-house', assets.house.name);
+    setElementData('owned-house-price', `${assets.house.price} Grobls`);
+    setElementData('owned-car', assets.car.name);
+    setElementData('owned-car-price', `${assets.car.price} Grobls`);
+
+    setElementData('owned-land-amount', assets.land.amount);
+    setElementData('owned-land-price', `${assets.land.amount * assets.land.currentMonthPrice} Grobls`);
+    setElementData('owned-oil-amount', assets.oil.amount);
+    setElementData('owned-oil-price', `${assets.oil.amount * assets.oil.currentMonthPrice} Grobls`);
 }
 
 const updateDayOfWeekColor = (dayOfWeekNum) => {
