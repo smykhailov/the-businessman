@@ -106,8 +106,12 @@ main {
     color: violet;
 }
 
-.text-center {
-    text-align: center;
+.text-color-grey {
+    color: grey;
+}
+
+.text-color-yellow {
+    color: yellow;
 }
 
 .text-left {
@@ -193,15 +197,21 @@ footer > div > span {
     cursor: pointer;
 }
 
+.wide-line {
+    margin: 16px 0px;
+}
+
 .modal {
     position: absolute;
-    top: 50px;
+    top: 20px;
     width: calc(660px - 20px);
     height: calc(378px - 100px);
     z-index: 100;
     padding: 100px 0 0 20px;
 }
 
-.wide-line {
-    margin: 16px 0px;
+.table-fixed {
+    table-layout: fixed;
+    width: 100%;
+    text-align: right !important;
 }

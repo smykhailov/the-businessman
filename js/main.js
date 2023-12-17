@@ -72,21 +72,37 @@ const startNewGame = () => {
         price:Math.round(Math.random() * 10000 + 60000),
     }];
 
-    const exchangePrices = {
+    const currentMonthExchangePrices = {
         land: Math.round(Math.random() * 300 + 100),
         oil: Math.round(Math.random() * 30+ 10)
     }
+
+    const historicalExchangePrices = [
+        // HACK: this is temporary, this logic will be changed, when we implement end of month logic 
+        { land: currentMonthExchangePrices.land, oil: currentMonthExchangePrices.oil },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+        { land: 0, oil: 0 },
+    ];
 
     const assets = {
         house: availableHouses[Math.round(Math.random() * 6)],
         car: availableCars[Math.round(Math.random() * 6)],
         land: {
             amount: Math.round(Math.random() * 95 + 5),
-            currentMonthPrice: exchangePrices.land,
+            currentMonthPrice: currentMonthExchangePrices.land,
         },
         oil: {
             amount: Math.round(Math.random() * 250 + 10),
-            currentMonthPrice: exchangePrices.oil,
+            currentMonthPrice: currentMonthExchangePrices.oil,
         }
     }
 
@@ -105,8 +121,9 @@ const startNewGame = () => {
         setAccountsBalance(accountBalances);
         setTaxes(taxes);
 
-        setAssets(assets);
         setAssistantData(assistantData);
+        setAssets(assets);
+        setExchangePrices(currentMonthExchangePrices, historicalExchangePrices);
         
         today.setDate(today.getDate() + 1);
     }, 2000);
@@ -156,6 +173,22 @@ const setAssets = (assets) => {
     setElementData('owned-land-price', `${assets.land.amount * assets.land.currentMonthPrice} Grobls`);
     setElementData('owned-oil-amount', assets.oil.amount);
     setElementData('owned-oil-price', `${assets.oil.amount * assets.oil.currentMonthPrice} Grobls`);
+}
+
+const setExchangePrices = (exchangeCurrentMonthPrices, historicalExchangePrices) => {
+    setElementData('exchange-land-price', exchangeCurrentMonthPrices.land);
+    setElementData('exchange-oil-price', exchangeCurrentMonthPrices.oil);
+
+    for (let i = 1; i < historicalExchangePrices.length + 1; i++) {
+        // Arrays are zero based, but we start from 1 and need to subtract 1
+        const historicalExchangePrice = historicalExchangePrices[i - 1];
+
+        const landPriceElement = document.getElementById(`land-price-${i}`);
+        const oilPriceElement = document.getElementById(`oil-price-${i}`);
+
+        landPriceElement.innerText = historicalExchangePrice.land;
+        oilPriceElement.innerText = historicalExchangePrice.oil;
+    }
 }
 
 const updateDayOfWeekColor = (dayOfWeekNum) => {
