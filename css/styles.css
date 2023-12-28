@@ -114,6 +114,14 @@ main {
     color: yellow;
 }
 
+.text-color-red {
+    color: red;
+}
+
+.text-smaller {
+    font-size: smaller;
+}
+
 .text-left {
     text-align: left !important;
 }
@@ -203,9 +211,9 @@ footer > div > span {
 
 .modal {
     position: absolute;
-    top: 20px;
+    top: 0;
     width: calc(660px - 20px);
-    height: calc(378px - 100px);
+    height: calc(378px - 50px);
     z-index: 100;
     padding: 100px 0 0 20px;
 }
@@ -214,4 +222,17 @@ footer > div > span {
     table-layout: fixed;
     width: 100%;
     text-align: right !important;
+}
+
+.market-table {
+    font-size: smaller;
+}
+
+.market-table th {
+    color: blueviolet;
+    border-bottom: 1px solid blueviolet;
+}
+
+.market-table td {
+    color: yellow;
 }

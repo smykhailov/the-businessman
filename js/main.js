@@ -124,6 +124,7 @@ const startNewGame = () => {
         setAssistantData(assistantData);
         setAssets(assets);
         setExchangePrices(currentMonthExchangePrices, historicalExchangePrices);
+        setMarketData(availableCars, availableHouses);
         
         today.setDate(today.getDate() + 1);
     }, 2000);
@@ -188,6 +189,28 @@ const setExchangePrices = (exchangeCurrentMonthPrices, historicalExchangePrices)
 
         landPriceElement.innerText = historicalExchangePrice.land;
         oilPriceElement.innerText = historicalExchangePrice.oil;
+    }
+}
+
+const setMarketData = (cars, houses) => {
+    for (let i = 1; i < cars.length + 1; i++) {
+        const car = cars[i - 1];
+
+        const carNameElement = document.getElementById(`car-${i}`);
+        const carPriceElement = document.getElementById(`car-price-${i}`);
+
+        carNameElement.innerText = car.name;
+        carPriceElement.innerText = `${car.price} Grobls`;
+    }
+
+    for (let i = 1; i < houses.length + 1; i++) {
+        const house = houses[i - 1];
+
+        const houseNameElement = document.getElementById(`house-${i}`);
+        const housePriceElement = document.getElementById(`house-price-${i}`);
+
+        houseNameElement.innerText = house.name;
+        housePriceElement.innerText = `${house.price} Grobls`;
     }
 }
 
