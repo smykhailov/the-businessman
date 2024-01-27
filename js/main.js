@@ -1,4 +1,5 @@
 let currentGameHandler = null;
+const gameData = {};
 
 const startNewGame = () => {
     const today = new Date();
@@ -105,6 +106,34 @@ const startNewGame = () => {
             currentMonthPrice: currentMonthExchangePrices.oil,
         }
     }
+
+    const bankData = {
+        credit: [],
+        deposit: []
+    };
+
+    for (let i = 0; i < 12; i++) {
+        const initialData = {
+            amount: 0,
+            monthsToPayBack: 0,
+            returnDay: 0,
+        };
+
+        bankData.credit.push(initialData);
+        bankData.deposit.push(initialData);
+    }
+
+    gameData.today = today;
+    gameData.interestRates = interestRates;
+    gameData.accountBalances = accountBalances;
+    gameData.taxes = taxes;
+    gameData.assistantData = assistantData;
+    gameData.assets = assets;
+    gameData.availableCars = availableCars;
+    gameData.availableHouses = availableHouses;
+    gameData.currentMonthExchangePrices = currentMonthExchangePrices;
+    gameData.historicalExchangePrices = historicalExchangePrices;
+    gameData.bankData = bankData;
 
     setMainMenuMouseActions();
     setMainMenuKeyboardActions();
@@ -306,6 +335,8 @@ const assignKeyBindingsToOpenWindow = (keyBinding, windowId, e) => {
     }
 
     if (e.key === keyBinding || (e.key === keyBinding.toUpperCase() && e.shiftKey)) {
+        e.stopPropagation();
+        e.preventDefault();
         open(windowId);
     }
 }
@@ -344,4 +375,246 @@ const setQuitWindowEventHandlers = () => {
     });
 }
 
+const assignBankWindowActions = () => {
+    
+
+    // // Type can be 'lend' or 'borrow'
+    // const createPrompts = (type) => {
+    //     const bankError = document.getElementById('bank-error');
+    //     const bankAmountWrapper = document.getElementById('bank-amount-wrapper');
+    //     const bankTimeWrapper = document.getElementById('bank-time-wrapper');
+
+    //     bankAmountWrapper.classList.remove('hidden');
+    //     bankTimeWrapper.classList.remove('hidden');
+    //     bankError.innerText = '';
+
+    //     const bankAmountPrompt = document.getElementById('bank-amount-prompt');
+    //     const bankAmount = document.getElementById('bank-amount');
+    //     bankAmountPrompt.innerText = `How much money do you want to ${type}?`;
+    //     bankAmount.focus();
+        
+    //     const bankTimePrompt = document.getElementById('bank-time-prompt');
+    //     const bankTime = document.getElementById('bank-time');
+    //     bankTimePrompt.innerText = 'Months to pay back:';
+
+    //     const recreateNode = (el, withChildren) => {
+    //         if (withChildren) {
+    //           el.parentNode.replaceChild(el.cloneNode(true), el);
+    //         }
+    //         else {
+    //           var newEl = el.cloneNode(false);
+    //           while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+    //           el.parentNode.replaceChild(newEl, el);
+    //         }
+    //       }
+
+    //     const cleanPrompts = () => {
+    //         recreateNode(bankAmountPrompt, false);
+    //         recreateNode(bankTimePrompt, false);
+    //         // bankAmountPrompt.innerHTML = '';
+    //         // bankAmount.value = '';
+    
+    //         // bankTimePrompt.innerHTML = '';
+    //         // bankTime.value = '';
+    
+    //         // bankError.innerText = '';
+    //         bankAmountWrapper.classList.add('hidden');
+    //         bankTimeWrapper.classList.add('hidden');
+    //     };
+
+    //     bankAmount.addEventListener('keydown', (e) => {
+    //         bankError.innerText = '';
+        
+    //         if (e.key === 'Enter' || e.key === 'Tab') {
+    //             const amountValue = +bankAmount.value;
+
+    //             if ((type === 'lend') && (+amountValue > gameData.accountBalances.accountBalance)) {
+    //                 bankAmount.value = '';
+    //                 bankError.innerText = `You do not have enough money to ${type}.`;
+    //                 return;
+    //             }
+
+    //             bankTime.focus();
+                
+    //             bankTime.addEventListener('keydown', (e) => {
+    //                 bankError.innerText = '';
+
+    //                 if (e.key === 'Enter') {
+    //                     const timeValue = +bankTime.value;
+
+    //                     if (+timeValue > 12 || +timeValue < 1) {
+    //                         bankError.innerText = `You cannot ${type} money for more than 12 months and less than 1.`;
+    //                         return;
+    //                     }
+                        
+    //                     if (type === 'lend') {                            
+    //                         const bankDataForMonth = gameData.bankData.deposit[timeValue - 1];
+    //                         bankDataForMonth.amount += amountValue;
+    //                         bankDataForMonth.monthsToPayBack = timeValue;
+
+    //                         bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+
+    //                         gameData.accountBalances.accountBalance -= amountValue;
+    //                         gameData.accountBalances.depositBalance += amountValue;
+    //                     } else {                            
+    //                         const bankDataForMonth = gameData.bankData.credit[timeValue - 1];
+    //                         bankDataForMonth.amount += amountValue;
+    //                         bankDataForMonth.monthsToPayBack = timeValue;
+
+    //                         bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+
+    //                         gameData.accountBalances.accountBalance += amountValue;
+    //                         gameData.accountBalances.creditBalance += amountValue;
+    //                     }
+                        
+    //                     setAccountsBalance(gameData.accountBalances);
+    //                     cleanPrompts();
+    //                     document.getElementById('bank-main').classList.add('hidden');
+    //                 }
+
+    //                 if (e.key === 'Escape') {
+    //                     cleanPrompts();
+    //                     document.getElementById('bank-main').classList.add('hidden');
+    //                 }
+    //             });
+    //         }
+    //     });        
+    // };
+
+    let lendMoneyProcessing = false;
+    let borrowMoneyProcessing = false;
+
+    document.addEventListener('keydown', (e) => {
+        const bankWindow = document.getElementById('bank-main');
+        if (bankWindow.classList.contains('hidden')) {
+            return;
+        }
+
+        const lendMoneyKeyBinding = 'l';
+        const borrowMoneyKeyBinding = 'b';
+
+        const bankError = document.getElementById('bank-error');
+        const lendMoney = document.getElementById('lend-money');
+        const borrowMoney = document.getElementById('borrow-money');
+
+        const amountToLend = document.getElementById('amount-to-lend');
+        const amountToBorrow = document.getElementById('amount-to-borrow');
+
+        const timeToLend = document.getElementById('time-to-lend');
+        const timeToBorrow = document.getElementById('time-to-borrow');
+
+        bankError.innerText = '';
+
+        const cleanPrompts = () => {
+            lendMoney.classList.add('hidden');
+            borrowMoney.classList.add('hidden');
+
+            amountToLend.value = '';
+            amountToBorrow.value = '';
+
+            timeToLend.value = '';
+            timeToBorrow.value = '';
+
+            bankError.innerText = '';
+
+            lendMoneyProcessing = false;
+            borrowMoneyProcessing = false;
+        };
+
+        if (e.key === lendMoneyKeyBinding || (e.key === lendMoneyKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (borrowMoneyProcessing) {
+                return;
+            }
+
+            lendMoney.classList.remove('hidden');
+            amountToLend.focus();
+
+            lendMoneyProcessing = true;    
+        }
+        
+        if (e.key === borrowMoneyKeyBinding || (e.key === borrowMoneyKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (lendMoneyProcessing) {
+                return;
+            }
+
+            borrowMoney.classList.remove('hidden');
+            amountToBorrow.focus();
+            
+            borrowMoneyProcessing = true;
+        }
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            if (lendMoneyProcessing) {
+                const amountValue = +amountToLend.value;
+                const timeValue = +timeToLend.value;
+
+                if (+amountValue > gameData.accountBalances.accountBalance) {
+                    amountToLend.value = '';
+                    bankError.innerText = 'You do not have enough money to lend.';
+                    return;
+                }
+
+                if (e.target === amountToLend) {
+                    timeToLend.focus();
+                }
+
+                if (e.target === timeToLend) {
+                    if (+timeValue > 12 || +timeValue < 1) {
+                        timeToLend.value = '';
+                        bankError.innerText = 'You cannot lend money for more than 12 months and less than 1.';
+                        return;
+                    }
+                }
+
+                const bankDataForMonth = gameData.bankData.deposit[timeValue - 1];
+                bankDataForMonth.amount += amountValue;
+                bankDataForMonth.monthsToPayBack = timeValue;
+                bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+
+                gameData.accountBalances.accountBalance -= amountValue;
+                gameData.accountBalances.depositBalance += amountValue;
+            }
+            
+            if (borrowMoneyProcessing) {
+                const amountValue = +amountToBorrow.value;
+                const timeValue = +timeToBorrow.value;
+                
+                if (e.target === amountToBorrow) {
+                    timeToBorrow.focus();
+                }
+
+                if (e.target === timeToBorrow) {
+                    if (+timeValue > 12 || +timeValue < 1) {
+                        timeToBorrow.value = '';
+                        bankError.innerText = 'You cannot borrow money for more than 12 months and less than 1.';
+                        return;
+                    }
+                }
+
+                const bankDataForMonth = gameData.bankData.credit[timeValue - 1];
+                bankDataForMonth.amount += amountValue;
+                bankDataForMonth.monthsToPayBack = timeValue;
+                bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+
+                gameData.accountBalances.accountBalance += amountValue;
+                gameData.accountBalances.creditBalance += amountValue;
+            }
+            
+            setAccountsBalance(gameData.accountBalances);
+            cleanPrompts();
+            document.getElementById('bank-main').classList.add('hidden');
+        }
+
+        if (e.key === 'Escape') {
+            cleanPrompts();
+        }
+    }, true);
+}
+
+const assignActionHandlers = () => {
+    assignBankWindowActions();
+};
+
+
 startNewGame();
+assignActionHandlers();

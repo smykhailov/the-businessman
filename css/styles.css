@@ -236,3 +236,12 @@ footer > div > span {
 .market-table td {
     color: yellow;
 }
+
+input {
+    padding-left: 10px;
+    width: 200px;
+    border: none;
+    background-color: transparent;
+    font-size: 20px;
+    outline: none;
+}

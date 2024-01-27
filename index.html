@@ -33,7 +33,7 @@
                   <div class="window secondary-bg single-line-black text-color-black">
                     <div class="window-content">
                       <p>Credit interest rate: <span id="credit-interest-rate"></span>%</p>
-                      <p>Debit interest rate: <span id="debit-interest-rate"></span>%</p>
+                      <p>Deposit interest rate: <span id="debit-interest-rate"></span>%</p>
                       <p>Income tax: <span id="income-tax"></span>%</p>
                     </div>
                   </div>
@@ -127,6 +127,35 @@
                 <hr />
 
                 <p class="wide-line text-smaller text-color-yellow">ESC - exit without buying; L - Lend money, B - Borrow money;</p>
+                <div id="lend-money" class="hidden text-smaller text-color-turquoise">
+                  <div>
+                    <label for="amount-to-lend">
+                      How much money do you want to lend:
+                      <input id="amount-to-lend" title="Amount to lend" type="number" min="0" class="text-color-turquoise" />
+                    </label>
+                  </div>
+                  <div>
+                    <label for="time-to-lend">
+                      Months to pay back:
+                      <input id="time-to-lend" title="Month to lend" type="number" min="1" max="12" class="text-color-turquoise" />
+                    </label>
+                  </div>
+                </div>
+                <div id="borrow-money" class="hidden text-smaller text-color-turquoise">
+                  <div>
+                    <label for="amount-to-borrow">
+                      How much money do you want to borrow:
+                      <input id="amount-to-borrow" title="Amount to borrow" type="number" min="0" class="text-color-turquoise" />
+                    </label>
+                  </div>
+                  <div>
+                    <label for="time-to-borrow">
+                      Months to pay back:
+                      <input id="time-to-borrow" title="Month to borrow" type="number" min="1" max="12" class="text-color-turquoise" />
+                    </label>
+                  </div>
+                </div>
+                <p id="bank-error" class="text-smaller text-color-red"></p>
               </div>
             </div>
           </div>
