@@ -5,7 +5,7 @@ const startNewGame = () => {
     const today = new Date();
 
     const interestRates = {
-        debitInterestRate: Math.random() * 10 + 5,
+        depositInterestRate: Math.random() * 10 + 5,
         incomeTax: Math.random() * 9 + 1,
         creditInterestRate: Math.random() * 10 + 5,
     }
@@ -113,14 +113,16 @@ const startNewGame = () => {
     };
 
     for (let i = 0; i < 12; i++) {
-        const initialData = {
+        bankData.credit.push({
             amount: 0,
             monthsToPayBack: 0,
             returnDay: 0,
-        };
-
-        bankData.credit.push(initialData);
-        bankData.deposit.push(initialData);
+        });
+        bankData.deposit.push({
+            amount: 0,
+            monthsToPayBack: 0,
+            returnDay: 0,
+        });
     }
 
     gameData.today = today;
@@ -172,7 +174,7 @@ const setTodayView = (today) => {
 
 const setInterestRates = (interestRates) => {
     setElementData('credit-interest-rate', interestRates.creditInterestRate.toFixed(0));
-    setElementData('debit-interest-rate', interestRates.debitInterestRate.toFixed(0));
+    setElementData('deposit-interest-rate', interestRates.depositInterestRate.toFixed(0));
     setElementData('income-tax', interestRates.incomeTax.toFixed(0));
 }
 
@@ -240,6 +242,24 @@ const setMarketData = (cars, houses) => {
 
         houseNameElement.innerText = house.name;
         housePriceElement.innerText = `${house.price} Grobls`;
+    }
+}
+
+const setBankData = (bankData) => {
+    for (let i = 1; i < bankData.credit.length + 1; i++) {
+        const credit = bankData.credit[i - 1];
+
+        const row = i <= 6 ? 1 : 2;
+        const column = i <= 6 ? i : i - 6;
+        setElementData(`credit-${row}-${column}`, credit.amount);
+    }
+
+    for (let i = 1; i < bankData.deposit.length + 1; i++) {
+        const deposit = bankData.deposit[i - 1];
+
+        const row = i <= 6 ? 1 : 2;
+        const column = i <= 6 ? i : i - 6;
+        setElementData(`deposit-${row}-${column}`, deposit.amount);
     }
 }
 
@@ -360,7 +380,6 @@ const open = (windowId) => {
 }
 
 const setQuitWindowEventHandlers = () => {
-    
     document.addEventListener('keyup', (e) => {
         const quitWindow = document.getElementById('quit-main');
     
@@ -376,111 +395,6 @@ const setQuitWindowEventHandlers = () => {
 }
 
 const assignBankWindowActions = () => {
-    
-
-    // // Type can be 'lend' or 'borrow'
-    // const createPrompts = (type) => {
-    //     const bankError = document.getElementById('bank-error');
-    //     const bankAmountWrapper = document.getElementById('bank-amount-wrapper');
-    //     const bankTimeWrapper = document.getElementById('bank-time-wrapper');
-
-    //     bankAmountWrapper.classList.remove('hidden');
-    //     bankTimeWrapper.classList.remove('hidden');
-    //     bankError.innerText = '';
-
-    //     const bankAmountPrompt = document.getElementById('bank-amount-prompt');
-    //     const bankAmount = document.getElementById('bank-amount');
-    //     bankAmountPrompt.innerText = `How much money do you want to ${type}?`;
-    //     bankAmount.focus();
-        
-    //     const bankTimePrompt = document.getElementById('bank-time-prompt');
-    //     const bankTime = document.getElementById('bank-time');
-    //     bankTimePrompt.innerText = 'Months to pay back:';
-
-    //     const recreateNode = (el, withChildren) => {
-    //         if (withChildren) {
-    //           el.parentNode.replaceChild(el.cloneNode(true), el);
-    //         }
-    //         else {
-    //           var newEl = el.cloneNode(false);
-    //           while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
-    //           el.parentNode.replaceChild(newEl, el);
-    //         }
-    //       }
-
-    //     const cleanPrompts = () => {
-    //         recreateNode(bankAmountPrompt, false);
-    //         recreateNode(bankTimePrompt, false);
-    //         // bankAmountPrompt.innerHTML = '';
-    //         // bankAmount.value = '';
-    
-    //         // bankTimePrompt.innerHTML = '';
-    //         // bankTime.value = '';
-    
-    //         // bankError.innerText = '';
-    //         bankAmountWrapper.classList.add('hidden');
-    //         bankTimeWrapper.classList.add('hidden');
-    //     };
-
-    //     bankAmount.addEventListener('keydown', (e) => {
-    //         bankError.innerText = '';
-        
-    //         if (e.key === 'Enter' || e.key === 'Tab') {
-    //             const amountValue = +bankAmount.value;
-
-    //             if ((type === 'lend') && (+amountValue > gameData.accountBalances.accountBalance)) {
-    //                 bankAmount.value = '';
-    //                 bankError.innerText = `You do not have enough money to ${type}.`;
-    //                 return;
-    //             }
-
-    //             bankTime.focus();
-                
-    //             bankTime.addEventListener('keydown', (e) => {
-    //                 bankError.innerText = '';
-
-    //                 if (e.key === 'Enter') {
-    //                     const timeValue = +bankTime.value;
-
-    //                     if (+timeValue > 12 || +timeValue < 1) {
-    //                         bankError.innerText = `You cannot ${type} money for more than 12 months and less than 1.`;
-    //                         return;
-    //                     }
-                        
-    //                     if (type === 'lend') {                            
-    //                         const bankDataForMonth = gameData.bankData.deposit[timeValue - 1];
-    //                         bankDataForMonth.amount += amountValue;
-    //                         bankDataForMonth.monthsToPayBack = timeValue;
-
-    //                         bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
-
-    //                         gameData.accountBalances.accountBalance -= amountValue;
-    //                         gameData.accountBalances.depositBalance += amountValue;
-    //                     } else {                            
-    //                         const bankDataForMonth = gameData.bankData.credit[timeValue - 1];
-    //                         bankDataForMonth.amount += amountValue;
-    //                         bankDataForMonth.monthsToPayBack = timeValue;
-
-    //                         bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
-
-    //                         gameData.accountBalances.accountBalance += amountValue;
-    //                         gameData.accountBalances.creditBalance += amountValue;
-    //                     }
-                        
-    //                     setAccountsBalance(gameData.accountBalances);
-    //                     cleanPrompts();
-    //                     document.getElementById('bank-main').classList.add('hidden');
-    //                 }
-
-    //                 if (e.key === 'Escape') {
-    //                     cleanPrompts();
-    //                     document.getElementById('bank-main').classList.add('hidden');
-    //                 }
-    //             });
-    //         }
-    //     });        
-    // };
-
     let lendMoneyProcessing = false;
     let borrowMoneyProcessing = false;
 
@@ -566,13 +480,16 @@ const assignBankWindowActions = () => {
                     }
                 }
 
-                const bankDataForMonth = gameData.bankData.deposit[timeValue - 1];
-                bankDataForMonth.amount += amountValue;
-                bankDataForMonth.monthsToPayBack = timeValue;
-                bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+                if (amountValue > 0 && (timeValue > 0 && timeValue < 13)) {
+                    gameData.bankData.deposit[timeValue - 1].amount += amountValue;
+                    gameData.bankData.deposit[timeValue - 1].monthsToPayBack = timeValue;
+                    gameData.bankData.deposit[timeValue - 1].returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
 
-                gameData.accountBalances.accountBalance -= amountValue;
-                gameData.accountBalances.depositBalance += amountValue;
+                    gameData.accountBalances.accountBalance -= amountValue;
+                    gameData.accountBalances.depositBalance += amountValue;
+                } else {
+                    return;
+                }
             }
             
             if (borrowMoneyProcessing) {
@@ -591,16 +508,21 @@ const assignBankWindowActions = () => {
                     }
                 }
 
-                const bankDataForMonth = gameData.bankData.credit[timeValue - 1];
-                bankDataForMonth.amount += amountValue;
-                bankDataForMonth.monthsToPayBack = timeValue;
-                bankDataForMonth.returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+                if (amountValue > 0 && (timeValue > 0 && timeValue < 13)) {
+                    gameData.bankData.credit[timeValue - 1].amount += amountValue;
+                    gameData.bankData.credit[timeValue - 1].monthsToPayBack = timeValue;
+                    gameData.bankData.credit[timeValue - 1].returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
 
-                gameData.accountBalances.accountBalance += amountValue;
-                gameData.accountBalances.creditBalance += amountValue;
+                    gameData.accountBalances.accountBalance += amountValue;
+                    gameData.accountBalances.creditBalance += amountValue;
+                } else {
+                    return;
+                }
             }
             
             setAccountsBalance(gameData.accountBalances);
+            setBankData(gameData.bankData);
+
             cleanPrompts();
             document.getElementById('bank-main').classList.add('hidden');
         }
