@@ -533,8 +533,116 @@ const assignBankWindowActions = () => {
     }, true);
 }
 
+
+const assignExchangeWindowActions = () => {
+    let buyLandProcessing = false;
+    let buyOilProcessing = false;
+
+    document.addEventListener('keydown', (e) => {
+        const exchangeWindow = document.getElementById('exchange-main');
+        if (exchangeWindow.classList.contains('hidden')) {
+            return;
+        }
+
+        const buyLandKeyBinding = 'l';
+        const buyOilKeyBinding = 'o';
+
+        const exchangeError = document.getElementById('exchange-error');
+        const buyLand = document.getElementById('buy-land');
+        const buyOil = document.getElementById('buy-oil');
+
+        const amountLandToBuy = document.getElementById('amount-land-buy');
+        const amountOilToBuy = document.getElementById('amount-oil-buy');
+
+        exchangeError.innerText = '';
+
+        const cleanPrompts = () => {
+            buyLand.classList.add('hidden');
+            buyOil.classList.add('hidden');
+
+            amountLandToBuy.value = '';
+            amountOilToBuy.value = '';
+
+            exchangeError.innerText = '';
+
+            buyLandProcessing = false;
+            buyOilProcessing = false;
+        };
+
+        if (e.key === buyLandKeyBinding || (e.key === buyLandKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (buyOilProcessing) {
+                return;
+            }
+
+            buyLand.classList.remove('hidden');
+            amountLandToBuy.focus();
+
+            buyLandProcessing = true;    
+        }
+        
+        if (e.key === buyOilKeyBinding || (e.key === buyOilKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (buyLandProcessing) {
+                return;
+            }
+
+            buyOil.classList.remove('hidden');
+            amountOilToBuy.focus();
+            
+            buyOilProcessing = true;
+        }
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            if (buyLandProcessing) {
+                const amountValue = +amountLandToBuy.value;
+                const totalLandPrice = amountValue * gameData.currentMonthExchangePrices.land;
+
+                if (totalLandPrice > gameData.accountBalances.accountBalance) {
+                    amountLandToBuy.value = '';
+                    exchangeError.innerText = 'You do not have enough money.';
+                    return;
+                }
+
+                if (amountValue > 0) {
+                    gameData.assets.land.amount += amountValue;
+                    gameData.accountBalances.accountBalance -= totalLandPrice;
+                } else {
+                    return;
+                }
+            }
+            
+            if (buyOilProcessing) {
+                const amountValue = +amountOilToBuy.value;
+                const totalOilPrice = amountValue * gameData.currentMonthExchangePrices.oil;
+                
+                if (totalOilPrice > gameData.accountBalances.accountBalance) {
+                    amountOilToBuy.value = '';
+                    exchangeError.innerText = 'You do not have enough money.';
+                    return;
+                }
+
+                if (amountValue > 0) {
+                    gameData.assets.oil.amount += amountValue;
+                    gameData.accountBalances.accountBalance -= totalOilPrice;
+                } else {
+                    return;
+                }
+            }
+            
+            setAccountsBalance(gameData.accountBalances);
+
+            cleanPrompts();
+            document.getElementById('exchange-main').classList.add('hidden');
+        }
+
+        if (e.key === 'Escape') {
+            cleanPrompts();
+        }
+    }, true);
+}
+
 const assignActionHandlers = () => {
     assignBankWindowActions();
+    assignExchangeWindowActions();
 };
 
 
