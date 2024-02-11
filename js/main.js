@@ -11,7 +11,7 @@ const startNewGame = () => {
     }
 
     const accountBalances = {
-        accountBalance: Math.random() * 10000 + 1000,
+        accountBalance: Math.random() * 20000 + 10000,
         creditBalance: 0,
         depositBalance: 0,
         netIncome: 0,
@@ -533,6 +533,111 @@ const assignBankWindowActions = () => {
     }, true);
 }
 
+const assignMarketWindowActions = () => {
+    let buyCarProcessing = false;
+    let buyHouseProcessing = false;
+
+    document.addEventListener('keydown', (e) => {
+        const marketWindow = document.getElementById('market-main');
+        if (marketWindow.classList.contains('hidden')) {
+            return;
+        }
+
+        const buyCarKeyBinding = 'c';
+        const buyHouseKeyBinding = 'h';
+
+        const marketError = document.getElementById('market-error');
+        const buyCar = document.getElementById('buy-car');
+        const buyHouse = document.getElementById('buy-house');
+
+        const carNumToBuy = document.getElementById('car-num-to-buy');
+        const houseNumToBuy = document.getElementById('house-num-to-buy');
+
+        marketError.innerText = '';
+
+        const cleanPrompts = () => {
+            buyCar.classList.add('hidden');
+            buyHouse.classList.add('hidden');
+
+            carNumToBuy.value = '';
+            houseNumToBuy.value = '';
+
+            marketError.innerText = '';
+
+            buyCarProcessing = false;
+            buyHouseProcessing = false;
+        };
+
+        if (e.key === buyCarKeyBinding || (e.key === buyCarKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (buyHouseProcessing) {
+                return;
+            }
+
+            buyCar.classList.remove('hidden');
+            carNumToBuy.focus();
+
+            buyCarProcessing = true;    
+        }
+        
+        if (e.key === buyHouseKeyBinding || (e.key === buyHouseKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (buyCarProcessing) {
+                return;
+            }
+
+            buyHouse.classList.remove('hidden');
+            houseNumToBuy.focus();
+            
+            buyHouseProcessing = true;
+        }
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            if (buyCarProcessing) {
+                const num = +carNumToBuy.value;
+                const price = gameData.availableCars[num - 1].price;
+
+                if (price > gameData.accountBalances.accountBalance) {
+                    carNumToBuy.value = '';
+                    marketError.innerText = 'You do not have enough money.';
+                    return;
+                }
+
+                if (num > 0) {
+                    gameData.assets.car = gameData.availableCars[num - 1];
+                    gameData.accountBalances.accountBalance -= price;
+                } else {
+                    return;
+                }
+            }
+            
+            if (buyHouseProcessing) {
+                const num = +houseNumToBuy.value;
+                const price = gameData.availableHouses[num - 1].price;
+
+                if (price > gameData.accountBalances.accountBalance) {
+                    houseNumToBuy.value = '';
+                    marketError.innerText = 'You do not have enough money.';
+                    return;
+                }
+
+                if (num > 0) {
+                    gameData.assets.house = gameData.availableHouses[num - 1];
+                    gameData.accountBalances.accountBalance -= price;
+                } else {
+                    return;
+                }
+            }
+            
+            setAccountsBalance(gameData.accountBalances);
+
+            cleanPrompts();
+            document.getElementById('market-main').classList.add('hidden');
+        }
+
+        if (e.key === 'Escape') {
+            cleanPrompts();
+        }
+    }, true);
+}
 
 const assignExchangeWindowActions = () => {
     let buyLandProcessing = false;
@@ -642,9 +747,9 @@ const assignExchangeWindowActions = () => {
 
 const assignActionHandlers = () => {
     assignBankWindowActions();
+    assignMarketWindowActions();
     assignExchangeWindowActions();
 };
-
 
 startNewGame();
 assignActionHandlers();

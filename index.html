@@ -247,7 +247,26 @@
                     </tr>
                   </tbody>
                 </table>
+                
                 <p class="wide-line text-smaller text-color-red">ESC - exit without buying; C, H - buy corresponding item;</p>
+                
+                <div id="buy-car" class="hidden text-smaller text-color-turquoise">
+                  <div>
+                    <label for="car-num-to-buy">
+                      Which car do you want to buy (1-7):
+                      <input id="car-num-to-buy" title="Car number to buy" type="number" min="1" max="7" class="text-color-turquoise" />
+                    </label>
+                  </div>
+                </div>
+                <div id="buy-house" class="hidden text-smaller text-color-turquoise">
+                  <div>
+                    <label for="house-num-to-buy">
+                      Which house do you want to buy (1-7):
+                      <input id="house-num-to-buy" title="House number to buy" type="number" min="1" max="7" class="text-color-turquoise" />
+                    </label>
+                  </div>
+                </div>
+                <p id="market-error" class="text-smaller text-color-red"></p>
               </div>
             </div>
           </div>
@@ -340,7 +359,7 @@
                   <div>
                     <label for="amount-oil-buy">
                       How much oil do you want to buy:
-                      <input id="amount-oil-buy" title="Amount of oil to buy" type="number" min="0" class="text-color-turquoise" />
+                      <input id="amount-oil-buy" title="Amount of oil to buy" type="number" min="1" class="text-color-turquoise" />
                     </label>
                   </div>
                 </div>
