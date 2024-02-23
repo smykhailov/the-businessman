@@ -196,10 +196,12 @@ const setAssistantData = (data) => {
 }
 
 const setAssets = (assets) => {
-    setElementData('owned-house', assets.house.name);
-    setElementData('owned-house-price', `${assets.house.price} Grobls`);
-    setElementData('owned-car', assets.car.name);
-    setElementData('owned-car-price', `${assets.car.price} Grobls`);
+    setElementData('owned-house', assets.house ? assets.house.name : 'None');
+    setElementData('owned-house-amount', assets.house ? "1" : '');
+    setElementData('owned-house-price', `${assets.house ? assets.house.price : 0} Grobls`);
+    setElementData('owned-car', assets.car ? assets.car.name : 'None');
+    setElementData('owned-car-amount', assets.car ? "1" : '');
+    setElementData('owned-car-price', `${assets.car ? assets.car.price : 0} Grobls`);
 
     setElementData('owned-land-amount', assets.land.amount);
     setElementData('owned-land-price', `${assets.land.amount * assets.land.currentMonthPrice} Grobls`);
@@ -745,10 +747,139 @@ const assignExchangeWindowActions = () => {
     }, true);
 }
 
+const assignAssetsWindowActions = () => {
+    let sellLandProcessing = false;
+    let sellOilProcessing = false;
+
+    document.addEventListener('keydown', (e) => {
+        const assetsWindow = document.getElementById('assets-main');
+        if (assetsWindow.classList.contains('hidden')) {
+            return;
+        }
+
+        const sellHouseKeyBinding = 'h';
+        const sellCarKeyBinding = 'c';
+        const sellLandKeyBinding = 'l';
+        const sellOilKeyBinding = 'o';
+
+        const assetsError = document.getElementById('assets-error');
+        const sellLand = document.getElementById('sell-land');
+        const sellOil = document.getElementById('sell-oil');
+
+        const amountLandToSell = document.getElementById('amount-land-sell');
+        const amountOilToSell = document.getElementById('amount-oil-sell');
+
+        assetsError.innerText = '';
+
+        const cleanPrompts = () => {
+            sellLand.classList.add('hidden');
+            sellOil.classList.add('hidden');
+
+            amountLandToSell.value = '';
+            amountOilToSell.value = '';
+
+            assetsError.innerText = '';
+
+            sellLandProcessing = false;
+            sellOilProcessing = false;
+        };
+
+        if (e.key === sellHouseKeyBinding || (e.key === sellHouseKeyBinding.toUpperCase() && e.shiftKey)) {
+            gameData.accountBalances.accountBalance += gameData.assets.house.price;
+            gameData.assets.house = undefined;
+
+            setAssets(gameData.assets);
+            setAccountsBalance(gameData.accountBalances);
+            document.getElementById('assets-main').classList.add('hidden');
+            return
+        }
+
+        if (e.key === sellCarKeyBinding || (e.key === sellCarKeyBinding.toUpperCase() && e.shiftKey)) {
+            gameData.accountBalances.accountBalance += gameData.assets.car.price;
+            gameData.assets.car = undefined;
+
+            setAssets(gameData.assets);
+            setAccountsBalance(gameData.accountBalances);
+            document.getElementById('assets-main').classList.add('hidden');
+            return
+        }
+
+        if (e.key === sellLandKeyBinding || (e.key === sellLandKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (sellOilProcessing) {
+                return;
+            }
+
+            sellLand.classList.remove('hidden');
+            amountLandToSell.focus();
+
+            sellLandProcessing = true;    
+        }
+        
+        if (e.key === sellOilKeyBinding || (e.key === sellOilKeyBinding.toUpperCase() && e.shiftKey)) {
+            if (sellLandProcessing) {
+                return;
+            }
+
+            sellOil.classList.remove('hidden');
+            amountOilToSell.focus();
+            
+            sellOilProcessing = true;
+        }
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            if (sellLandProcessing) {
+                const amountValue = +amountLandToSell.value;
+                const totalLandPrice = amountValue * gameData.currentMonthExchangePrices.land;
+
+                if (amountValue > gameData.assets.land.amount) {
+                    amountLandToSell.value = '';
+                    assetsError.innerText = 'You do not have that much land.';
+                    return;
+                }
+
+                if (amountValue > 0) {
+                    gameData.assets.land.amount -= amountValue;
+                    gameData.accountBalances.accountBalance += totalLandPrice;
+                } else {
+                    return;
+                }
+            }
+            
+            if (sellOilProcessing) {
+                const amountValue = +amountOilToSell.value;
+                const totalOilPrice = amountValue * gameData.currentMonthExchangePrices.oil;
+
+                if (amountValue > gameData.assets.oil.amount) {
+                    amountOilToSell.value = '';
+                    assetsError.innerText = 'You do not have that much oil.';
+                    return;
+                }
+
+                if (amountValue > 0) {
+                    gameData.assets.oil.amount -= amountValue;
+                    gameData.accountBalances.accountBalance += totalOilPrice;
+                } else {
+                    return;
+                }
+            }
+            
+            setAccountsBalance(gameData.accountBalances);
+
+            cleanPrompts();
+            document.getElementById('assets-main').classList.add('hidden');
+        }
+
+        if (e.key === 'Escape') {
+            cleanPrompts();
+        }
+    }, true);
+}
+
 const assignActionHandlers = () => {
     assignBankWindowActions();
     assignMarketWindowActions();
     assignExchangeWindowActions();
+    assignAssetsWindowActions();
 };
 
 startNewGame();
