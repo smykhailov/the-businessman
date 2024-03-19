@@ -24,7 +24,13 @@ const startNewGame = () => {
 
     const assistantData = {
         oilToHeatHouse: Math.random() * 29 + 1,
-        birthday: `${(Math.random() * 11 + 1).toFixed(0)}/${(Math.random() * 27 + 1).toFixed(0)}`
+        birthday: `${(Math.random() * 11 + 1).toFixed(0)}/${(Math.random() * 27 + 1).toFixed(0)}`,
+        landSold: 0,
+        landBought: 0,
+        landGain: 0,
+        oilSold: 0,
+        oilBought: 0,
+        oilGain: 0,
     }
 
     const availableHouses = [{
@@ -156,7 +162,7 @@ const startNewGame = () => {
         setAssets(assets);
         setExchangePrices(currentMonthExchangePrices, historicalExchangePrices);
         setMarketData(availableCars, availableHouses);
-        
+
         today.setDate(today.getDate() + 1);
     }, 2000);
 };
@@ -193,6 +199,12 @@ const setTaxes = (taxes) => {
 const setAssistantData = (data) => {
     setElementData('oil-to-heat-house', data.oilToHeatHouse.toFixed(0));
     setElementData('birthday', data.birthday);
+    setElementData('land-sold', data.landSold);
+    setElementData('land-bought', data.landBought);
+    setElementData('land-gain', data.landGain);
+    setElementData('oil-sold', data.oilSold);
+    setElementData('oil-bought', data.oilBought);
+    setElementData('oil-gain', data.oilGain);
 }
 
 const setAssets = (assets) => {
@@ -207,6 +219,30 @@ const setAssets = (assets) => {
     setElementData('owned-land-price', `${assets.land.amount * assets.land.currentMonthPrice} Grobls`);
     setElementData('owned-oil-amount', assets.oil.amount);
     setElementData('owned-oil-price', `${assets.oil.amount * assets.oil.currentMonthPrice} Grobls`);
+
+    const credit = gameData.bankData.credit[gameData.today.getMonth()];
+    if (credit.amount !== 0) {
+        const element = setElementData('you-should-return-money', 
+            `You should return money ${credit.returnDay} this month.`);
+        
+        if (gameData.today.getDate() < credit.returnDay) {
+            element.classList.remove('hidden');
+        } else {
+            element.classList.add('hidden');
+        }
+    }
+
+    const deposit = gameData.bankData.deposit[gameData.today.getMonth()];
+    if (deposit.amount !== 0) {
+        const element = setElementData('you-get-money-back', 
+            `Bank will return money ${deposit.returnDay} of this month.`);
+
+        if (gameData.today.getDate() < deposit.returnDay) {
+            element.classList.remove('hidden');
+        } else {
+            element.classList.add('hidden');
+        }
+    }
 }
 
 const setExchangePrices = (exchangeCurrentMonthPrices, historicalExchangePrices) => {
@@ -280,6 +316,7 @@ const updateDayOfWeekColor = (dayOfWeekNum) => {
 const setElementData = (elementId, data) => {
     const element = document.getElementById(elementId);
     element.innerText = data;
+    return element;
 }
 
 const setMainMenuMouseActions = () => {
@@ -606,6 +643,7 @@ const assignMarketWindowActions = () => {
                 if (num > 0) {
                     gameData.assets.car = gameData.availableCars[num - 1];
                     gameData.accountBalances.accountBalance -= price;
+                    gameData.accountBalances.netIncome -= price;
                 } else {
                     return;
                 }
@@ -624,6 +662,7 @@ const assignMarketWindowActions = () => {
                 if (num > 0) {
                     gameData.assets.house = gameData.availableHouses[num - 1];
                     gameData.accountBalances.accountBalance -= price;
+                    gameData.accountBalances.netIncome -= price;
                 } else {
                     return;
                 }
@@ -712,6 +751,9 @@ const assignExchangeWindowActions = () => {
                 if (amountValue > 0) {
                     gameData.assets.land.amount += amountValue;
                     gameData.accountBalances.accountBalance -= totalLandPrice;
+                    gameData.accountBalances.netIncome -= totalLandPrice;
+                    gameData.assistantData.landBought += amountValue;
+                    gameData.assistantData.landGain -= totalLandPrice;
                 } else {
                     return;
                 }
@@ -730,12 +772,16 @@ const assignExchangeWindowActions = () => {
                 if (amountValue > 0) {
                     gameData.assets.oil.amount += amountValue;
                     gameData.accountBalances.accountBalance -= totalOilPrice;
+                    gameData.accountBalances.netIncome -= totalOilPrice;
+                    gameData.assistantData.oilBought += amountValue;
+                    gameData.assistantData.oilGain -= totalOilPrice;
                 } else {
                     return;
                 }
             }
             
             setAccountsBalance(gameData.accountBalances);
+            setAssistantData(gameData.assistantData);
 
             cleanPrompts();
             document.getElementById('exchange-main').classList.add('hidden');
@@ -786,6 +832,7 @@ const assignAssetsWindowActions = () => {
 
         if (e.key === sellHouseKeyBinding || (e.key === sellHouseKeyBinding.toUpperCase() && e.shiftKey)) {
             gameData.accountBalances.accountBalance += gameData.assets.house.price;
+            gameData.accountBalances.netIncome += gameData.assets.house.price;
             gameData.assets.house = undefined;
 
             setAssets(gameData.assets);
@@ -796,6 +843,7 @@ const assignAssetsWindowActions = () => {
 
         if (e.key === sellCarKeyBinding || (e.key === sellCarKeyBinding.toUpperCase() && e.shiftKey)) {
             gameData.accountBalances.accountBalance += gameData.assets.car.price;
+            gameData.accountBalances.netIncome += gameData.assets.car.price;
             gameData.assets.car = undefined;
 
             setAssets(gameData.assets);
@@ -840,6 +888,9 @@ const assignAssetsWindowActions = () => {
                 if (amountValue > 0) {
                     gameData.assets.land.amount -= amountValue;
                     gameData.accountBalances.accountBalance += totalLandPrice;
+                    gameData.accountBalances.netIncome += totalLandPrice;
+                    gameData.assistantData.landSold += amountValue;
+                    gameData.assistantData.landGain += totalLandPrice;
                 } else {
                     return;
                 }
@@ -858,12 +909,16 @@ const assignAssetsWindowActions = () => {
                 if (amountValue > 0) {
                     gameData.assets.oil.amount -= amountValue;
                     gameData.accountBalances.accountBalance += totalOilPrice;
+                    gameData.accountBalances.netIncome += totalOilPrice;
+                    gameData.assistantData.oilSold += amountValue;
+                    gameData.assistantData.oilGain += totalOilPrice;
                 } else {
                     return;
                 }
             }
             
             setAccountsBalance(gameData.accountBalances);
+            setAssistantData(gameData.assistantData);
 
             cleanPrompts();
             document.getElementById('assets-main').classList.add('hidden');
