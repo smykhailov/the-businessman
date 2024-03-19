@@ -121,12 +121,10 @@ const startNewGame = () => {
     for (let i = 0; i < 12; i++) {
         bankData.credit.push({
             amount: 0,
-            monthsToPayBack: 0,
             returnDay: 0,
         });
         bankData.deposit.push({
             amount: 0,
-            monthsToPayBack: 0,
             returnDay: 0,
         });
     }
@@ -474,6 +472,14 @@ const assignBankWindowActions = () => {
             borrowMoneyProcessing = false;
         };
 
+        const getMonthToReturn = (timeValue) => {
+            const currentMonth = gameData.today.getMonth();
+            // Get current month + time to lend/borrow, if it is more than 11, then we need to return it next year
+            const monthToReturn = currentMonth + timeValue > 11 ? currentMonth + timeValue - 12 : currentMonth + timeValue;
+
+            return monthToReturn;
+        }
+
         if (e.key === lendMoneyKeyBinding || (e.key === lendMoneyKeyBinding.toUpperCase() && e.shiftKey)) {
             if (borrowMoneyProcessing) {
                 return;
@@ -520,9 +526,10 @@ const assignBankWindowActions = () => {
                 }
 
                 if (amountValue > 0 && (timeValue > 0 && timeValue < 13)) {
-                    gameData.bankData.deposit[timeValue - 1].amount += amountValue;
-                    gameData.bankData.deposit[timeValue - 1].monthsToPayBack = timeValue;
-                    gameData.bankData.deposit[timeValue - 1].returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+                    const monthToReturn = getMonthToReturn(timeValue);
+
+                    gameData.bankData.deposit[monthToReturn].amount += amountValue;
+                    gameData.bankData.deposit[monthToReturn].returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
 
                     gameData.accountBalances.accountBalance -= amountValue;
                     gameData.accountBalances.depositBalance += amountValue;
@@ -548,9 +555,10 @@ const assignBankWindowActions = () => {
                 }
 
                 if (amountValue > 0 && (timeValue > 0 && timeValue < 13)) {
-                    gameData.bankData.credit[timeValue - 1].amount += amountValue;
-                    gameData.bankData.credit[timeValue - 1].monthsToPayBack = timeValue;
-                    gameData.bankData.credit[timeValue - 1].returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
+                    const monthToReturn = getMonthToReturn(timeValue);
+
+                    gameData.bankData.credit[monthToReturn].amount += amountValue;
+                    gameData.bankData.credit[monthToReturn].returnDay = gameData.today.getDate() > 28 ? 28 : gameData.today.getDate();
 
                     gameData.accountBalances.accountBalance += amountValue;
                     gameData.accountBalances.creditBalance += amountValue;
